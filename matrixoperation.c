@@ -136,9 +136,16 @@ void mult(int *matrix, double d, int row, int col)
     return;
 }
 
-void add(int *matrix, double d, int row1, int row2)
+void add(int *matrix, double d, int row1, int row2, int col)
 {
-    
+    int i;
+
+    for (i = 0; i < col; i++)
+    {
+        matrix[(row1 - 1)*col + i] += d * matrix[(row2 - 1)*col + i];
+    }
+
+    return;
 }
 
 // int* rref(int *matrix, int row, int col)
