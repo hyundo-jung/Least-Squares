@@ -14,7 +14,7 @@ void exchange(int *matrix, int row1, int row2, int col);
 
 void mult(int *matrix, double d, int row, int col);
 
-void add(int *matrix, double d, int row1, int row2);
+void add(int *matrix, double d, int row1, int row2, int col);
 
 int* rref(int *matrix, int row, int col);
 
