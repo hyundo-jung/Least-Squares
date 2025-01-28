@@ -124,9 +124,16 @@ void exchange(int *matrix, int row1, int row2, int col)
     return;
 }
 
-void mult(int *matrix, double d, int row)
+void mult(int *matrix, double d, int row, int col)
 {
+    int i;
 
+    for (i = 0; i < col; i++)
+    {
+        matrix[(row-1)*col + i] *= d;
+    }
+
+    return;
 }
 
 void add(int *matrix, double d, int row1, int row2)
