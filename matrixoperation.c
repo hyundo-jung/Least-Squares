@@ -182,6 +182,7 @@ void rref(double *matrix, int row, int col)
     // indicate which columns have pivot
     int loc;
     int currentCol = 0;
+    int currentRow;
     int pivCol;
     double pivot;
 
@@ -228,11 +229,60 @@ void rref(double *matrix, int row, int col)
         {
             if (matrix[j*col + pivCol] != 0 && pivot != 0)
             {
-                double multipier = matrix[j*col + pivCol] / pivot;
-                add(matrix, -multipier, j + 1, i + 1, col);
+                double multiplier = matrix[j*col + pivCol] / pivot;
+                add(matrix, -multiplier, j + 1, i + 1, col);
             }
         }
 
         currentCol++;
     }
+
+    printMatrix(matrix, row, col);
+
+
+    // ** row reduced form
+    int pivCount = 0;
+
+    for (i = 0; i < col; i++)
+    {
+        if (pivRow[i] != -1)
+        {
+            pivCount++;
+        }
+    }
+
+    int pivColumn[pivCount];
+
+    for (i = 0; i < pivCount; i++)
+    {
+        for (j = 0; j < col; j++)
+        {
+            if (fabs(matrix[i*col + j]) > 1e-8)
+            {
+                pivColumn[i] = j;
+                break;
+            }
+        }
+    }
+
+    for (i = pivCount - 1; i >= 0; i--)
+    {
+        
+        if (fabs(matrix[i*col + pivColumn[i]]) > 1e-8)
+        {
+            printf("%lf \n", matrix[i*col + pivColumn[i]]);
+            printf("here %d \n", i);
+            mult(matrix, 1/matrix[i*col + pivColumn[i]], i + 1, col);
+        }
+
+        for (j = 0; j < i; j++)
+        {
+            if(matrix[j*col + pivColumn[i]] > 1e-8)
+            {
+                add(matrix, -matrix[j*col + pivColumn[i]], j + 1, i + 1, col);
+            }
+        }
+    }
+
+    printMatrix(matrix, row, col);
 }
