@@ -1,25 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
-void printMatrix(int* matrix, int row, int col)
+void printMatrix(double* matrix, int row, int col)
 {
     int i, j;
     for (i = 0; i < row; i++)
     {
         for (j = 0; j < col; j++)
         {
-            printf("%d ", matrix[i*col + j]);
+            printf("%f ", matrix[i*col + j]);
         }
         printf("\n");
     }
     printf("\n");
 }
 
-int* copyMatrix(int *matrix, int row, int col)
+double* copyMatrix(double* matrix, int row, int col)
 {
-    int* two_d_array;
+    double* two_d_array;
     int i, j;
-    two_d_array = malloc(sizeof(int) * row * col);
+    two_d_array = malloc(sizeof(double) * row * col);
 
     if (two_d_array == NULL)
     {
@@ -38,9 +39,9 @@ int* copyMatrix(int *matrix, int row, int col)
     return two_d_array;
 } 
 
-int* transpose(int* matrix, int rows, int cols)
+double* transpose(double* matrix, int rows, int cols)
 {
-    int* transposeMatrix = malloc(sizeof(int) * cols * rows);
+    double* transposeMatrix = malloc(sizeof(double) * cols * rows);
     int i, j, temp;
 
 
@@ -55,11 +56,11 @@ int* transpose(int* matrix, int rows, int cols)
     return transposeMatrix;
 }
 
-int* multiplication(int *matrix1, int rows1, int cols1, int *matrix2, int rows2, int cols2)
+double* multiplication(double *matrix1, int rows1, int cols1, double *matrix2, int rows2, int cols2)
 {
-    int* resultMatrix;
+    double* resultMatrix;
     int i, j, k, value, idx = 0;
-    resultMatrix = malloc(sizeof(int) * rows1 * cols2);
+    resultMatrix = malloc(sizeof(double) * rows1 * cols2);
 
     for (i = 0; i < rows1; i++)
     {
@@ -77,12 +78,12 @@ int* multiplication(int *matrix1, int rows1, int cols1, int *matrix2, int rows2,
     return resultMatrix;
 }
 
-int* addZeroColum(int *matrix, int row, int col, int* endCol)
+double* addZeroColum(double *matrix, int row, int col, double* endCol)
 {
-    int* newMatrix;
+    double* newMatrix;
     int i, j, n = 0;
 
-    newMatrix = malloc(sizeof(int) * row * (col + 1));
+    newMatrix = malloc(sizeof(double) * row * (col + 1));
 
     for (i = 0; i < row; i++)
     {
@@ -103,11 +104,11 @@ int* addZeroColum(int *matrix, int row, int col, int* endCol)
     return newMatrix;
 }
 
-void inverse(int *matrix, int rows, int cols);
+// void inverse(int *matrix, int rows, int cols);
 
-void exchange(int *matrix, int row1, int row2, int col)
+void exchange(double *matrix, int row1, int row2, int col)
 {
-    int arr[col];
+    double arr[col];
     int i, j;
 
     for (i = 0; i < col; i++)
@@ -124,7 +125,7 @@ void exchange(int *matrix, int row1, int row2, int col)
     return;
 }
 
-void mult(int *matrix, double d, int row, int col)
+void mult(double *matrix, double d, int row, int col)
 {
     int i;
 
@@ -136,7 +137,8 @@ void mult(int *matrix, double d, int row, int col)
     return;
 }
 
-void add(int *matrix, double d, int row1, int row2, int col)
+// add row2 to row1 after multiplying with factor of d
+void add(double *matrix, double d, int row1, int row2, int col)
 {
     int i;
 
@@ -148,7 +150,89 @@ void add(int *matrix, double d, int row1, int row2, int col)
     return;
 }
 
-// int* rref(int *matrix, int row, int col)
-// {
+void max(double* value, int* pivIdx, double *matrix, int row, int col, int a, int b)
+{
+    int i, j;
 
-// }
+    for (i = 0; i < col; i++)
+    {
+        value[i] = 0;
+        pivIdx[i] = -1;
+    }
+
+    for (i = a; i < row; i++)
+    {
+        for (j = b; j < col; j++)
+        {
+            if (fabs(matrix[i*col + j]) > fabs(value[j]))
+            {
+                value[j] = matrix[i*col + j];
+                pivIdx[j] = i;
+            }
+        }
+    }
+}
+
+void rref(double *matrix, int row, int col)
+{
+    // 
+    double pivValue[col];
+    int pivRow[col];
+
+    // indicate which columns have pivot
+    int loc;
+    int currentCol = 0;
+    int pivCol;
+    double pivot;
+
+    int i, j, pivTrue;
+
+    for (i = 0; i < row - 1; i++)
+    {
+        if (currentCol == col)
+        {
+            return;
+        }
+
+
+        pivTrue = 0;
+        loc = 0;
+
+        max(pivValue, pivRow, matrix, row, col, i, currentCol);
+
+        pivCol = -1;
+        for (j = currentCol; j < col; j++)
+        {
+            if (pivValue[j] != 0)
+            {
+                pivCol = j;
+                pivTrue = 1;
+                break;
+            }
+        }
+
+        if (pivTrue == 0)
+        {
+            return;
+        }
+
+        if (pivRow[loc] != i)
+        {
+            exchange(matrix, i + 1, pivRow[pivCol] + 1, col);
+        }
+
+
+        pivot = matrix[i*col + pivCol];
+
+        for (j = i + 1; j < row; j++)
+        {
+            if (matrix[j*col + pivCol] != 0 && pivot != 0)
+            {
+                double multipier = matrix[j*col + pivCol] / pivot;
+                add(matrix, -multipier, j + 1, i + 1, col);
+            }
+        }
+
+        currentCol++;
+    }
+}
