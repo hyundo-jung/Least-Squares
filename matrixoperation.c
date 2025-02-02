@@ -167,6 +167,8 @@ void max(double* value, int* pivIdx, double *matrix, int row, int col, int a, in
     }
 }
 
+void findSolution(double* matrix, int row, int col, int pivCount);
+
 void rref(double *matrix, int row, int col)
 {
     // 
@@ -295,4 +297,90 @@ void rref(double *matrix, int row, int col)
     }
 
     printMatrix(matrix, row, col);
+
+    findSolution(matrix, row, col, pivCount);
+}
+
+void findSolution(double* matrix, int row, int col, int pivCount)
+{
+    int sol[pivCount];
+    double arr[col];
+    int i, j;
+
+    int pivColumn[col - 1];
+
+    for (i = 0; i < col - 1; i++)
+    {
+        pivColumn[i] = -1;
+    }
+
+    for (i = 0; i < row; i++)
+    {
+        for (j = 0; j < col - 1; j++)
+        {
+            if (fabs(matrix[i*col + j]) != 0)
+            {
+                pivColumn[i] = j;
+                break;
+            }
+        }
+    }
+
+    // for (i = 0; i < col - 1; i++)
+    // {
+    //     printf("%d \n", pivColumn[i]);
+    // }
+
+
+    // int nonPivot[col];
+
+    // if (pivCount < col)
+    // {
+    //     for (i = 0; i < col; i++)
+    //     {
+    //         if (pivColumn[i] == -1)
+    //         {
+    //             nonPivot[i] = 1;
+    //         }
+    //         else
+    //         {
+    //             nonPivot[i] = 0;
+    //         }
+    //     }
+    // }
+
+    for (i = row - 1; i >= 0; i--)
+    {
+        for (j = 0; j < col; j++)
+        {
+            if (j < col - 1 && pivColumn[j] == -1)
+            {
+                arr[j] = 0;
+            }
+            else
+            {
+                arr[j] = matrix[i*col + j]; 
+            }
+        }
+
+        int basicvariable = 0;
+        
+        for (j = 0; j < col - 1; j++)
+        {
+            if (arr[j] != 0 && pivColumn[j] != -1)
+            {
+                basicvariable = 1;
+                printf("x%d = %lf ", j + 1, arr[col - 1]);
+            }
+        }
+
+        for (j = 0; j < col - 1; j++)
+        {
+            if (pivColumn[j] == -1 && basicvariable == 1)
+            {
+                printf("+ (%lf) * x%d ", matrix[i*col +j], j + 1);
+            }
+        }
+        printf("\n");
+    }
 }
