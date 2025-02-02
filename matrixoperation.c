@@ -154,12 +154,6 @@ void max(double* value, int* pivIdx, double *matrix, int row, int col, int a, in
 {
     int i, j;
 
-    for (i = 0; i < col; i++)
-    {
-        value[i] = 0;
-        pivIdx[i] = -1;
-    }
-
     for (i = a; i < row; i++)
     {
         for (j = b; j < col; j++)
@@ -185,8 +179,14 @@ void rref(double *matrix, int row, int col)
     int currentRow;
     int pivCol;
     double pivot;
+    int i, j;
+    int pivTrue;
 
-    int i, j, pivTrue;
+    for (i = 0; i < col; i++)
+    {
+        pivValue[i] = 0;
+        pivRow[i] = -1;
+    }
 
     for (i = 0; i < row - 1; i++)
     {
@@ -245,6 +245,7 @@ void rref(double *matrix, int row, int col)
 
     for (i = 0; i < col; i++)
     {
+        // printf("PivRow: %d \n", pivRow[i]);
         if (pivRow[i] != -1)
         {
             pivCount++;
@@ -264,14 +265,12 @@ void rref(double *matrix, int row, int col)
             }
         }
     }
-
+    
     for (i = pivCount - 1; i >= 0; i--)
     {
         
         if (fabs(matrix[i*col + pivColumn[i]]) > 1e-8)
         {
-            printf("%lf \n", matrix[i*col + pivColumn[i]]);
-            printf("here %d \n", i);
             mult(matrix, 1/matrix[i*col + pivColumn[i]], i + 1, col);
         }
 
@@ -280,6 +279,17 @@ void rref(double *matrix, int row, int col)
             if(matrix[j*col + pivColumn[i]] > 1e-8)
             {
                 add(matrix, -matrix[j*col + pivColumn[i]], j + 1, i + 1, col);
+            }
+        }
+    }
+
+    for (i = 0; i < row; i++)
+    {
+        for (j = 0; j < col; j++)
+        {
+            if (fabs(matrix[i*col + j]) < 1e-8)
+            {
+                matrix[i*col + j] = 0;
             }
         }
     }
